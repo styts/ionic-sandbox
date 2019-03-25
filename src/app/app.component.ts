@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ApplicationRef, Injector } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -13,15 +13,21 @@ export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
   rootPage: any = HomePage;
+  congress: string;
 
   pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  constructor(public app: ApplicationRef, injector: Injector, public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
     this.initializeApp();
+
+    // For normal components we would use @Input to access the props, but his deoes not work on the App, the root component.
+    // So we use this trick to access the `congress` attribute
+    let element = injector.get(this.app.componentTypes[0]).getNativeElement()
+    this.congress = element.getAttribute('congress')
 
     // used for an example of ngFor and navigation
     this.pages = [
-      { title: 'Home', component: HomePage },
+      { title: `Congress #${this.congress}`, component: HomePage },
       { title: 'List', component: ListPage }
     ];
 
